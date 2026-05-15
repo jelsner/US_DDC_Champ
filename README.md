@@ -1,1 +1,1 @@
-This repo is for the US DDC Championship website
+This repo is for the 2026 US DDC Championship website
