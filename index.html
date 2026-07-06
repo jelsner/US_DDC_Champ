@@ -655,7 +655,7 @@
       <div class="cards">
         <article class="card">
           <h3>Need a partner?</h3>
-          <p>Register now and select <strong>I’m looking for a partner</strong>. Then check the <a href="#participants">Participants</a> section to see who else is looking, and reach out by email to connect before the tournament.</p>
+          <p>Register now and select <strong>I’m looking for a partner</strong>. Check the <a href="#participants">Participants</a> section to find a teammate. Once paired, either player can list the other as their partner — that removes both from the looking list.</p>
         </article>
         <article class="card">
           <h3>Already teamed up?</h3>
@@ -729,7 +729,7 @@
       <div class="partner-board">
         <article class="partner-panel">
           <h3>Looking for a partner</h3>
-          <p>Players without a partner yet. Reach out using the email listed on the form.</p>
+          <p>Players without a partner yet. If someone lists you as their partner, you’ll move to the partnered list automatically.</p>
           <div class="partner-table-wrap">
             <table class="partner-table" id="looking-table">
               <thead>
@@ -748,7 +748,7 @@
 
         <article class="partner-panel">
           <h3>Partnered up</h3>
-          <p>Confirmed teams based on registration entries.</p>
+          <p>Confirmed teams from registration entries. Listing someone as your partner updates the board for them too.</p>
           <div class="partner-table-wrap">
             <table class="partner-table" id="partnered-table">
               <thead>
@@ -810,6 +810,10 @@
       return cell && cell.v != null ? String(cell.v).trim() : '';
     }
 
+    function normalizeName(name) {
+      return name.trim().toLowerCase();
+    }
+
     function isLookingStatus(status, partnerName) {
       const value = status.toLowerCase();
       if (/looking|need|search|without|no partner|single|available/.test(value)) return true;
@@ -825,30 +829,68 @@
       const emailIndex = headers.findIndex((header) => /email/i.test(header));
       const partnerIndex = headers.findIndex((header) => /partner name/i.test(header));
       const divisionIndex = headers.findIndex((header) => /division/i.test(header));
+      const timestampIndex = headers.findIndex((header) => /timestamp/i.test(header));
+
+      const entriesByName = new Map();
+
+      rows.forEach((row, rowIndex) => {
+        const cells = row.c || [];
+        const name = cellValue(cells[nameIndex]);
+        if (!name || name === 'Your name') return;
+
+        const entry = {
+          name,
+          nameKey: normalizeName(name),
+          email: cellValue(cells[emailIndex]),
+          partner: cellValue(cells[partnerIndex]),
+          division: cellValue(cells[divisionIndex]),
+          status: statusIndex >= 0 ? cellValue(cells[statusIndex]) : '',
+          sortKey: timestampIndex >= 0 ? cellValue(cells[timestampIndex]) : String(rowIndex)
+        };
+
+        const existing = entriesByName.get(entry.nameKey);
+        if (!existing || entry.sortKey >= existing.sortKey) {
+          entriesByName.set(entry.nameKey, entry);
+        }
+      });
+
+      const entries = Array.from(entriesByName.values());
+
+      const claimedBy = new Map();
+      entries.forEach((entry) => {
+        if (!entry.partner) return;
+        const partnerKey = normalizeName(entry.partner);
+        if (!claimedBy.has(partnerKey)) {
+          claimedBy.set(partnerKey, entry);
+        }
+      });
 
       const looking = [];
       const partnered = [];
       const seenTeams = new Set();
 
-      rows.forEach((row) => {
-        const cells = row.c || [];
-        const name = cellValue(cells[nameIndex]);
-        if (!name || name === 'Your name') return;
-
-        const email = cellValue(cells[emailIndex]);
-        const partner = cellValue(cells[partnerIndex]);
-        const division = cellValue(cells[divisionIndex]);
-        const status = statusIndex >= 0 ? cellValue(cells[statusIndex]) : '';
-
-        if (isLookingStatus(status, partner)) {
-          looking.push({ name, email, division });
-          return;
-        }
-
-        const teamKey = [name.toLowerCase(), partner.toLowerCase(), division.toLowerCase()].sort().join('|');
+      function addTeam(player, partner, division) {
+        if (!partner) return;
+        const teamKey = [normalizeName(player), normalizeName(partner), (division || '').toLowerCase()].sort().join('|');
         if (seenTeams.has(teamKey)) return;
         seenTeams.add(teamKey);
-        partnered.push({ name, partner, division });
+        partnered.push({ name: player, partner, division });
+      }
+
+      entries.forEach((entry) => {
+        const claimer = claimedBy.get(entry.nameKey);
+        const claimedBySomeone = Boolean(claimer);
+        const selfLooking = isLookingStatus(entry.status, entry.partner);
+
+        if (entry.partner) {
+          addTeam(entry.name, entry.partner, entry.division);
+        } else if (claimedBySomeone) {
+          addTeam(claimer.name, entry.name, entry.division || claimer.division);
+        }
+
+        if (selfLooking && !entry.partner && !claimedBySomeone) {
+          looking.push({ name: entry.name, email: entry.email, division: entry.division });
+        }
       });
 
       lookingBody.innerHTML = looking.length
