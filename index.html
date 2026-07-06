@@ -254,6 +254,18 @@
       padding: 2rem 1rem 3rem;
     }
 
+    .registration-intro a,
+    .card a {
+      color: var(--orange);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .registration-intro a:hover,
+    .card a:hover {
+      text-decoration: underline;
+    }
+
     .registration-intro {
       max-width: 44rem;
       color: var(--muted);
@@ -378,6 +390,98 @@
       text-decoration: underline;
     }
 
+    .partner-board {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .partner-panel {
+      background: rgba(255, 255, 255, .78);
+      border: 1px solid rgba(23, 50, 77, .08);
+      border-radius: 1.4rem;
+      padding: 1.25rem;
+      box-shadow: 0 10px 25px rgba(23, 50, 77, .07);
+    }
+
+    .partner-panel h3 {
+      margin: 0 0 .35rem;
+      color: var(--orange);
+    }
+
+    .partner-panel p {
+      margin: 0 0 1rem;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+
+    .partner-table-wrap {
+      overflow-x: auto;
+    }
+
+    .partner-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .95rem;
+    }
+
+    .partner-table th,
+    .partner-table td {
+      padding: .55rem .45rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(23, 50, 77, .08);
+    }
+
+    .partner-table th {
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--muted);
+    }
+
+    .partner-table tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .partner-empty {
+      color: var(--muted);
+      font-size: .95rem;
+      margin: 0;
+    }
+
+    .partner-status {
+      display: inline-block;
+      padding: .15rem .5rem;
+      border-radius: 999px;
+      font-size: .72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .partner-status.looking {
+      background: rgba(255, 196, 0, .28);
+      color: var(--green);
+    }
+
+    .partner-status.matched {
+      background: rgba(95, 143, 63, .18);
+      color: var(--green);
+    }
+
+    .partner-table td .partner-status {
+      display: inline-block;
+      margin-left: .45rem;
+      vertical-align: middle;
+    }
+
+    .subsection-title {
+      font-size: 1.35rem;
+      margin: 2rem 0 .75rem;
+      letter-spacing: -.02em;
+    }
+
     .form-setup {
       background: var(--cream);
       border: 2px dashed rgba(7, 63, 29, .22);
@@ -419,6 +523,7 @@
       .logo-card { transform: none; max-width: 440px; }
       .cards { grid-template-columns: 1fr; }
       .registration-details { grid-template-columns: 1fr; }
+      .partner-board { grid-template-columns: 1fr; }
       .event-facts { grid-template-columns: 1fr; }
     }
   </style>
@@ -484,18 +589,18 @@
       <article class="news-item">
         <div class="news-date">July 6, 2026</div>
         <h3>Player registration is open</h3>
-        <p>Register below for the 2026 US DDC Championship. Check back for schedule, lodging, field location, and participant updates.</p>
+        <p>Register below for the 2026 US DDC Championship — no confirmed partner required. Check the partner board to find a teammate or see who’s already signed up.</p>
       </article>
     </section>
 
     <section id="registration">
       <h2 class="section-title">Registration</h2>
-      <p class="registration-intro">Register for the 2026 US DDC Championship. Each player registers individually at <strong>$20 per person</strong> ($40 per team of two). You’ll provide your name, your partner’s name, and your division — then pay by Venmo.</p>
+      <p class="registration-intro">Register for the 2026 US DDC Championship at <strong>$20 per person</strong>. You do <strong>not</strong> need a confirmed partner to sign up — choose <strong>I’m looking for a partner</strong> on the form and your name will appear on the <a href="#participants">partner board</a>. Already teamed up? Both players register separately and list each other’s names.</p>
 
       <div class="registration-details cards">
         <article class="card">
           <h3>Entry fee</h3>
-          <p><strong>$20 per person.</strong> Both players on a team should register and pay separately. Include your name in the payment note so we can match your entry.</p>
+          <p><strong>$20 per person</strong>, whether you have a partner or are still looking for one. If you’re already on a team, both players register and pay separately. Include your name in the Venmo note so we can match your entry.</p>
         </article>
         <article class="card">
           <h3>Payment</h3>
@@ -515,11 +620,11 @@
           </ul>
         </article>
         <article class="card">
-          <h3>What to include</h3>
+          <h3>On the form</h3>
           <ul>
-            <li>Your name</li>
-            <li>Your email (recommended)</li>
-            <li>Partner name</li>
+            <li>Your name and email</li>
+            <li><strong>Partner status:</strong> I have a partner <em>or</em> I’m looking for a partner</li>
+            <li>Partner name — only if you already have one</li>
             <li>Division: Open or Women’s</li>
           </ul>
         </article>
@@ -549,16 +654,16 @@
 
       <div class="cards">
         <article class="card">
-          <h3>Teams</h3>
-          <p>Players register and pay individually; both partners should list each other on the form.</p>
+          <h3>Need a partner?</h3>
+          <p>Register now and select <strong>I’m looking for a partner</strong>. Then check the <a href="#participants">Participants</a> section to see who else is looking, and reach out by email to connect before the tournament.</p>
         </article>
         <article class="card">
-          <h3>Deadline</h3>
-          <p>Register before the tournament so we can build brackets and confirm the field. Check back here for a firm deadline.</p>
+          <h3>Already teamed up?</h3>
+          <p>Each player registers and pays individually. Both partners should list each other on the form and select <strong>I have a partner</strong>.</p>
         </article>
         <article class="card">
           <h3>Questions?</h3>
-          <p>Contact the Tally Pod organizers if you need help with registration, payment, or division placement.</p>
+          <p>Contact the Tally Pod organizers for help with registration, payment, partner matching, or division placement.</p>
         </article>
       </div>
     </section>
@@ -619,7 +724,49 @@
 
     <section id="participants">
       <h2 class="section-title">Participants</h2>
-      <p class="registration-intro">Registered players appear below as entries come in through the registration form.</p>
+      <p class="registration-intro">See who’s registered, who’s already partnered up, and who’s looking for a teammate. Lists update automatically as players submit the registration form.</p>
+
+      <div class="partner-board">
+        <article class="partner-panel">
+          <h3>Looking for a partner</h3>
+          <p>Players without a partner yet. Reach out using the email listed on the form.</p>
+          <div class="partner-table-wrap">
+            <table class="partner-table" id="looking-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Division</th>
+                  <th>Email</th>
+                </tr>
+              </thead>
+              <tbody id="looking-body">
+                <tr><td colspan="3"><p class="partner-empty">Loading…</p></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="partner-panel">
+          <h3>Partnered up</h3>
+          <p>Confirmed teams based on registration entries.</p>
+          <div class="partner-table-wrap">
+            <table class="partner-table" id="partnered-table">
+              <thead>
+                <tr>
+                  <th>Player</th>
+                  <th>Partner</th>
+                  <th>Division</th>
+                </tr>
+              </thead>
+              <tbody id="partnered-body">
+                <tr><td colspan="3"><p class="partner-empty">Loading…</p></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+      </div>
+
+      <h3 class="subsection-title">Full registration list</h3>
 
       <div class="form-setup" id="sheet-setup" hidden>
         <h3>Connect your responses sheet</h3>
@@ -649,6 +796,7 @@
   <script>
     const GOOGLE_FORM_EMBED_URL = 'https://docs.google.com/forms/d/17Ux1yRDCKT04Kwp_qwQUUv_zHQ0_ZAGJE8JtzvK_96Q/viewform?embedded=true&hl=en';
     const GOOGLE_SHEET_EMBED_URL = 'https://docs.google.com/spreadsheets/d/1nkYIMeVzAX0DezESp1atoudO4a1HHLt2eqpQ3ns8TO0/htmlembed?widget=true&headers=true';
+    const GOOGLE_SHEET_ID = '1nkYIMeVzAX0DezESp1atoudO4a1HHLt2eqpQ3ns8TO0';
 
     const VENMO_HANDLE = '@James-Elsner-2';
 
@@ -656,6 +804,96 @@
       if (!url) return url;
       const separator = url.includes('?') ? '&' : '?';
       return url.includes('hl=') ? url : url + separator + 'hl=en';
+    }
+
+    function cellValue(cell) {
+      return cell && cell.v != null ? String(cell.v).trim() : '';
+    }
+
+    function isLookingStatus(status, partnerName) {
+      const value = status.toLowerCase();
+      if (/looking|need|search|without|no partner|single|available/.test(value)) return true;
+      if (/have|partnered|confirmed|yes|together/.test(value)) return false;
+      return !partnerName;
+    }
+
+    function renderPartnerBoard(rows, headers) {
+      const lookingBody = document.getElementById('looking-body');
+      const partneredBody = document.getElementById('partnered-body');
+      const statusIndex = headers.findIndex((header) => /partner status|have a partner|partner\?/i.test(header));
+      const nameIndex = headers.findIndex((header) => /^your name$/i.test(header));
+      const emailIndex = headers.findIndex((header) => /email/i.test(header));
+      const partnerIndex = headers.findIndex((header) => /partner name/i.test(header));
+      const divisionIndex = headers.findIndex((header) => /division/i.test(header));
+
+      const looking = [];
+      const partnered = [];
+      const seenTeams = new Set();
+
+      rows.forEach((row) => {
+        const cells = row.c || [];
+        const name = cellValue(cells[nameIndex]);
+        if (!name || name === 'Your name') return;
+
+        const email = cellValue(cells[emailIndex]);
+        const partner = cellValue(cells[partnerIndex]);
+        const division = cellValue(cells[divisionIndex]);
+        const status = statusIndex >= 0 ? cellValue(cells[statusIndex]) : '';
+
+        if (isLookingStatus(status, partner)) {
+          looking.push({ name, email, division });
+          return;
+        }
+
+        const teamKey = [name.toLowerCase(), partner.toLowerCase(), division.toLowerCase()].sort().join('|');
+        if (seenTeams.has(teamKey)) return;
+        seenTeams.add(teamKey);
+        partnered.push({ name, partner, division });
+      });
+
+      lookingBody.innerHTML = looking.length
+        ? looking.map((player) => `
+            <tr>
+              <td>${player.name}<span class="partner-status looking">Looking</span></td>
+              <td>${player.division || '—'}</td>
+              <td>${player.email || '—'}</td>
+            </tr>
+          `).join('')
+        : '<tr><td colspan="3"><p class="partner-empty">No players looking for a partner yet.</p></td></tr>';
+
+      partneredBody.innerHTML = partnered.length
+        ? partnered.map((team) => `
+            <tr>
+              <td>${team.name}</td>
+              <td>${team.partner || '—'}</td>
+              <td>${team.division || '—'}</td>
+            </tr>
+          `).join('')
+        : '<tr><td colspan="3"><p class="partner-empty">No partnered teams listed yet.</p></td></tr>';
+    }
+
+    async function loadPartnerBoard() {
+      const lookingBody = document.getElementById('looking-body');
+      const partneredBody = document.getElementById('partnered-body');
+
+      try {
+        const response = await fetch(
+          'https://docs.google.com/spreadsheets/d/' + GOOGLE_SHEET_ID + '/gviz/tq?tqx=out:json&sheet=Form%20Responses%201'
+        );
+        const text = await response.text();
+        const match = text.match(/setResponse\((.*)\);?\s*$/s);
+        if (!match) throw new Error('Could not parse sheet response');
+
+        const data = JSON.parse(match[1]);
+        const rows = data.table.rows || [];
+        const headers = rows.length ? rows[0].c.map((cell) => cellValue(cell)) : [];
+        const entries = rows.slice(1);
+        renderPartnerBoard(entries, headers);
+      } catch (error) {
+        const message = '<tr><td colspan="3"><p class="partner-empty">Partner board unavailable. Check that the responses sheet is shared publicly.</p></td></tr>';
+        lookingBody.innerHTML = message;
+        partneredBody.innerHTML = message;
+      }
     }
 
     (function () {
@@ -688,6 +926,8 @@
         sheetIframe.src = sheetUrl;
         sheetEmbed.hidden = false;
       }
+
+      loadPartnerBoard();
     })();
   </script>
 </body>
