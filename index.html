@@ -334,6 +334,50 @@
       border: 0;
     }
 
+    .sheet-embed {
+      background: var(--card);
+      border: 1px solid rgba(23, 50, 77, .08);
+      border-radius: 1.4rem;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(23, 50, 77, .07);
+    }
+
+    .sheet-embed iframe {
+      display: block;
+      width: 100%;
+      min-height: 28rem;
+      border: 0;
+    }
+
+    .venue-list {
+      margin: .5rem 0 0;
+      padding: 0;
+      list-style: none;
+      color: var(--muted);
+    }
+
+    .venue-list li + li {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(23, 50, 77, .08);
+    }
+
+    .venue-list strong {
+      display: block;
+      color: var(--ink);
+      margin-bottom: .2rem;
+    }
+
+    .venue-list a {
+      color: var(--orange);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .venue-list a:hover {
+      text-decoration: underline;
+    }
+
     .form-setup {
       background: var(--cream);
       border: 2px dashed rgba(7, 63, 29, .22);
@@ -418,7 +462,7 @@
         </div>
         <div class="fact">
           <strong>Format</strong>
-          <span>2v2 · Open & Women’s</span>
+          <span>Escape!! Open & Women’s Divisions</span>
         </div>
       </div>
 
@@ -524,7 +568,18 @@
       <div class="cards">
         <article class="card">
           <h3>Venue</h3>
-          <p>Add field name, address, parking information, and map link.</p>
+          <ul class="venue-list">
+            <li>
+              <strong>Optimist Park</strong>
+              1806 E Indianhead Dr, Tallahassee, FL 32301<br>
+              <a href="https://maps.google.com/?q=Optimist+Park+1806+E+Indianhead+Dr+Tallahassee+FL+32301" target="_blank" rel="noopener noreferrer">View on map</a>
+            </li>
+            <li>
+              <strong>J. Lewis Hall Sr. Woodville Park and Recreation Complex</strong>
+              Old Woodville Hwy, Tallahassee, FL 32305<br>
+              <a href="https://maps.google.com/?q=J.+Lewis+Hall+Sr.+Woodville+Park+and+Recreation+Complex+Tallahassee+FL+32305" target="_blank" rel="noopener noreferrer">View on map</a>
+            </li>
+          </ul>
         </article>
         <article class="card">
           <h3>Schedule</h3>
@@ -539,9 +594,25 @@
 
     <section id="participants">
       <h2 class="section-title">Participants</h2>
-      <div class="card">
-        <h3>Registered players</h3>
-        <p>Add a simple table here, or embed a published Google Sheet that updates automatically as players register.</p>
+      <p class="registration-intro">Registered players appear below as entries come in through the registration form.</p>
+
+      <div class="form-setup" id="sheet-setup" hidden>
+        <h3>Connect your responses sheet</h3>
+        <p>Paste your published Google Sheet embed URL into <code>GOOGLE_SHEET_EMBED_URL</code> near the bottom of this page.</p>
+        <ol>
+          <li>In Google Forms, open the <strong>Responses</strong> tab and link responses to a Google Sheet.</li>
+          <li>In that sheet, go to <strong>File → Share → Publish to web</strong>.</li>
+          <li>Choose the responses sheet, click <strong>Publish</strong>, then copy the embed URL or iframe <code>src</code>.</li>
+          <li>Set <code>GOOGLE_SHEET_EMBED_URL</code> to that URL and save.</li>
+        </ol>
+      </div>
+
+      <div class="sheet-embed" id="sheet-embed" hidden>
+        <iframe
+          id="participants-iframe"
+          title="US DDC Championship 2026 registered players"
+          loading="lazy"
+        ></iframe>
       </div>
     </section>
   </main>
@@ -551,16 +622,27 @@
   </footer>
 
   <script>
-    const GOOGLE_FORM_EMBED_URL = 'https://docs.google.com/forms/d/17Ux1yRDCKT04Kwp_qwQUUv_zHQ0_ZAGJE8JtzvK_96Q/viewform?embedded=true';
+    const GOOGLE_FORM_EMBED_URL = 'https://docs.google.com/forms/d/17Ux1yRDCKT04Kwp_qwQUUv_zHQ0_ZAGJE8JtzvK_96Q/viewform?embedded=true&hl=en';
+    const GOOGLE_SHEET_EMBED_URL = 'https://docs.google.com/spreadsheets/d/1nkYIMeVzAX0DezESp1atoudO4a1HHLt2eqpQ3ns8TO0/htmlembed?widget=true&headers=true';
 
     const VENMO_HANDLE = '@James-Elsner-2';
 
+    function withEnglishLocale(url) {
+      if (!url) return url;
+      const separator = url.includes('?') ? '&' : '?';
+      return url.includes('hl=') ? url : url + separator + 'hl=en';
+    }
+
     (function () {
-      const embedUrl = GOOGLE_FORM_EMBED_URL.trim();
+      const embedUrl = withEnglishLocale(GOOGLE_FORM_EMBED_URL.trim());
+      const sheetUrl = GOOGLE_SHEET_EMBED_URL.trim();
       const iframe = document.getElementById('registration-iframe');
       const link = document.getElementById('registration-link');
       const embed = document.getElementById('form-embed');
       const setup = document.getElementById('form-setup');
+      const sheetIframe = document.getElementById('participants-iframe');
+      const sheetEmbed = document.getElementById('sheet-embed');
+      const sheetSetup = document.getElementById('sheet-setup');
 
       document.getElementById('venmo-handle').textContent = VENMO_HANDLE;
       document.getElementById('venmo-link').href = 'https://venmo.com/' + VENMO_HANDLE.replace(/^@/, '');
@@ -568,13 +650,19 @@
       if (!embedUrl) {
         setup.hidden = false;
         link.hidden = true;
-        return;
+      } else {
+        iframe.src = embedUrl.includes('embedded=true') ? embedUrl : embedUrl + (embedUrl.includes('?') ? '&' : '?') + 'embedded=true';
+        link.href = embedUrl.replace('?embedded=true', '').replace('&embedded=true', '').replace(/[&?]hl=en/, '');
+        embed.hidden = false;
+        link.hidden = false;
       }
 
-      iframe.src = embedUrl.includes('?') ? embedUrl : embedUrl + '?embedded=true';
-      link.href = embedUrl.replace('?embedded=true', '').replace('&embedded=true', '');
-      embed.hidden = false;
-      link.hidden = false;
+      if (!sheetUrl) {
+        sheetSetup.hidden = false;
+      } else {
+        sheetIframe.src = sheetUrl;
+        sheetEmbed.hidden = false;
+      }
     })();
   </script>
 </body>
