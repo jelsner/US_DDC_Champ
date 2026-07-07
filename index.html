@@ -361,6 +361,29 @@
       border: 0;
     }
 
+    .map-embed {
+      background: var(--card);
+      border: 1px solid rgba(23, 50, 77, .08);
+      border-radius: 1.4rem;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(23, 50, 77, .07);
+      margin-bottom: 1.5rem;
+    }
+
+    .map-embed iframe {
+      display: block;
+      width: 100%;
+      min-height: 32rem;
+      border: 0;
+    }
+
+    .map-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .75rem;
+      margin-top: .75rem;
+    }
+
     .venue-list {
       margin: .5rem 0 0;
       padding: 0;
@@ -655,7 +678,7 @@
       <div class="cards">
         <article class="card">
           <h3>Need a partner?</h3>
-          <p>Register now and select <strong>I’m looking for a partner</strong>. Check the <a href="#participants">Participants</a> section to find a teammate. Once paired, either player can list the other as their partner — that removes both from the looking list.</p>
+          <p>Register now and select <strong>I’m looking for a partner</strong>. Check the <a href="#participants">Participants</a> list and <a href="#player-map">player map</a> to find a teammate near you. Once paired, either player can list the other as their partner.</p>
         </article>
         <article class="card">
           <h3>Already teamed up?</h3>
@@ -724,7 +747,7 @@
 
     <section id="participants">
       <h2 class="section-title">Participants</h2>
-      <p class="registration-intro">See who’s registered, who’s already partnered up, and who’s looking for a teammate. Lists update automatically as players submit the registration form.</p>
+      <p class="registration-intro">See who’s registered, who’s already partnered up, and who’s looking for a teammate. Use the partner lists and map below to connect with players near you.</p>
 
       <div class="partner-board">
         <article class="partner-panel">
@@ -766,6 +789,23 @@
         </article>
       </div>
 
+      <h3 class="subsection-title" id="player-map">Player map</h3>
+      <p class="registration-intro">Looking for a partner? Explore where other Escape!! players are located. Click a pin for details. Want to be added? Contact <a href="mailto:james.elsner@gmail.com">james.elsner@gmail.com</a>.</p>
+
+      <div class="map-embed">
+        <iframe
+          id="player-map-iframe"
+          src="https://batchgeo.com/map/b5fe37ee43af78b895d84b5002dab05c"
+          title="DDC Escape!! players map"
+          loading="lazy"
+          allowfullscreen
+        ></iframe>
+      </div>
+
+      <div class="map-actions">
+        <a class="button secondary" href="https://batchgeo.com/map/b5fe37ee43af78b895d84b5002dab05c" target="_blank" rel="noopener noreferrer">Open map in new window</a>
+      </div>
+
       <h3 class="subsection-title">Full registration list</h3>
 
       <div class="form-setup" id="sheet-setup" hidden>
@@ -797,6 +837,7 @@
     const GOOGLE_FORM_EMBED_URL = 'https://docs.google.com/forms/d/17Ux1yRDCKT04Kwp_qwQUUv_zHQ0_ZAGJE8JtzvK_96Q/viewform?embedded=true&hl=en';
     const GOOGLE_SHEET_EMBED_URL = 'https://docs.google.com/spreadsheets/d/1nkYIMeVzAX0DezESp1atoudO4a1HHLt2eqpQ3ns8TO0/htmlembed?widget=true&headers=true';
     const GOOGLE_SHEET_ID = '1nkYIMeVzAX0DezESp1atoudO4a1HHLt2eqpQ3ns8TO0';
+    const BATCHGEO_MAP_URL = 'https://batchgeo.com/map/b5fe37ee43af78b895d84b5002dab05c';
 
     const VENMO_HANDLE = '@James-Elsner-2';
 
@@ -951,6 +992,11 @@
 
       document.getElementById('venmo-handle').textContent = VENMO_HANDLE;
       document.getElementById('venmo-link').href = 'https://venmo.com/' + VENMO_HANDLE.replace(/^@/, '');
+
+      const mapIframe = document.getElementById('player-map-iframe');
+      if (mapIframe && BATCHGEO_MAP_URL) {
+        mapIframe.src = BATCHGEO_MAP_URL;
+      }
 
       if (!embedUrl) {
         setup.hidden = false;
