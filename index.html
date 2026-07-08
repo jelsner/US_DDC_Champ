@@ -240,6 +240,10 @@
       box-shadow: 0 10px 25px rgba(23, 50, 77, .07);
     }
 
+    .news-item + .news-item {
+      margin-top: 1rem;
+    }
+
     .news-date {
       font-size: .85rem;
       color: var(--muted);
@@ -467,6 +471,40 @@
       border-bottom: 0;
     }
 
+    .registration-table-wrap {
+      overflow-x: auto;
+      background: var(--card);
+      border: 1px solid rgba(23, 50, 77, .08);
+      border-radius: 1.4rem;
+      box-shadow: 0 10px 25px rgba(23, 50, 77, .07);
+      margin-bottom: 1.5rem;
+    }
+
+    .registration-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .95rem;
+    }
+
+    .registration-table th,
+    .registration-table td {
+      padding: .65rem .75rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(23, 50, 77, .08);
+    }
+
+    .registration-table th {
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--muted);
+      background: rgba(255, 248, 223, .55);
+    }
+
+    .registration-table tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
     .partner-empty {
       color: var(--muted);
       font-size: .95rem;
@@ -610,6 +648,11 @@
     <section id="news">
       <h2 class="section-title">Latest News</h2>
       <article class="news-item">
+        <div class="news-date">July 8, 2026</div>
+        <h3>Early registration bonus</h3>
+        <p>The first 10 teams to register get custom hooded UPF shirts!</p>
+      </article>
+      <article class="news-item">
         <div class="news-date">July 6, 2026</div>
         <h3>Player registration is open</h3>
         <p>Register below for the 2026 US DDC Championship — no confirmed partner required. Check the partner board to find a teammate or see who’s already signed up.</p>
@@ -649,6 +692,7 @@
             <li><strong>Partner status:</strong> I have a partner <em>or</em> I’m looking for a partner</li>
             <li>Partner name — only if you already have one</li>
             <li>Division: Open or Women’s</li>
+            <li>Shirt size</li>
           </ul>
         </article>
       </div>
@@ -808,23 +852,15 @@
 
       <h3 class="subsection-title">Full registration list</h3>
 
-      <div class="form-setup" id="sheet-setup" hidden>
-        <h3>Connect your responses sheet</h3>
-        <p>Paste your published Google Sheet embed URL into <code>GOOGLE_SHEET_EMBED_URL</code> near the bottom of this page.</p>
-        <ol>
-          <li>In Google Forms, open the <strong>Responses</strong> tab and link responses to a Google Sheet.</li>
-          <li>In that sheet, go to <strong>File → Share → Publish to web</strong>.</li>
-          <li>Choose the responses sheet, click <strong>Publish</strong>, then copy the embed URL or iframe <code>src</code>.</li>
-          <li>Set <code>GOOGLE_SHEET_EMBED_URL</code> to that URL and save.</li>
-        </ol>
-      </div>
-
-      <div class="sheet-embed" id="sheet-embed" hidden>
-        <iframe
-          id="participants-iframe"
-          title="US DDC Championship 2026 registered players"
-          loading="lazy"
-        ></iframe>
+      <div class="registration-table-wrap">
+        <table class="registration-table" id="registration-table">
+          <thead id="registration-head">
+            <tr><th>Loading…</th></tr>
+          </thead>
+          <tbody id="registration-body">
+            <tr><td>Loading registrations…</td></tr>
+          </tbody>
+        </table>
       </div>
     </section>
   </main>
@@ -835,9 +871,9 @@
 
   <script>
     const GOOGLE_FORM_EMBED_URL = 'https://docs.google.com/forms/d/17Ux1yRDCKT04Kwp_qwQUUv_zHQ0_ZAGJE8JtzvK_96Q/viewform?embedded=true&hl=en';
-    const GOOGLE_SHEET_EMBED_URL = 'https://docs.google.com/spreadsheets/d/1nkYIMeVzAX0DezESp1atoudO4a1HHLt2eqpQ3ns8TO0/htmlembed?widget=true&headers=true';
     const GOOGLE_SHEET_ID = '1nkYIMeVzAX0DezESp1atoudO4a1HHLt2eqpQ3ns8TO0';
     const BATCHGEO_MAP_URL = 'https://batchgeo.com/map/b5fe37ee43af78b895d84b5002dab05c';
+    const PRIVATE_SHEET_COLUMNS = [/shirt/i];
 
     const VENMO_HANDLE = '@James-Elsner-2';
 
@@ -955,9 +991,47 @@
         : '<tr><td colspan="3"><p class="partner-empty">No partnered teams listed yet.</p></td></tr>';
     }
 
-    async function loadPartnerBoard() {
+    function isPrivateColumn(header) {
+      return PRIVATE_SHEET_COLUMNS.some((pattern) => pattern.test(header));
+    }
+
+    function renderRegistrationList(rows, headers) {
+      const tableHead = document.getElementById('registration-head');
+      const tableBody = document.getElementById('registration-body');
+      const visibleIndexes = headers
+        .map((header, index) => ({ header, index }))
+        .filter(({ header }) => header && !isPrivateColumn(header));
+
+      if (!visibleIndexes.length) {
+        tableHead.innerHTML = '<tr><th>Registrations</th></tr>';
+        tableBody.innerHTML = '<tr><td><p class="partner-empty">No registration data available.</p></td></tr>';
+        return;
+      }
+
+      const dataRows = rows.filter((row) => {
+        const cells = row.c || [];
+        const firstValue = visibleIndexes
+          .map(({ index }) => cellValue(cells[index]))
+          .find((value) => value);
+        return Boolean(firstValue);
+      });
+
+      tableHead.innerHTML = '<tr>' + visibleIndexes.map(({ header }) => `<th>${header}</th>`).join('') + '</tr>';
+
+      tableBody.innerHTML = dataRows.length
+        ? dataRows.map((row) => {
+            const cells = row.c || [];
+            return '<tr>' + visibleIndexes.map(({ index }) => `<td>${cellValue(cells[index]) || '—'}</td>`).join('') + '</tr>';
+          }).join('')
+        : '<tr><td colspan="' + visibleIndexes.length + '"><p class="partner-empty">No registrations yet.</p></td></tr>';
+    }
+
+    async function loadRegistrationData() {
       const lookingBody = document.getElementById('looking-body');
       const partneredBody = document.getElementById('partnered-body');
+      const tableHead = document.getElementById('registration-head');
+      const tableBody = document.getElementById('registration-body');
+      const errorMessage = '<tr><td colspan="3"><p class="partner-empty">Registration data unavailable. Check that the responses sheet is shared publicly.</p></td></tr>';
 
       try {
         const response = await fetch(
@@ -972,23 +1046,21 @@
         const headers = rows.length ? rows[0].c.map((cell) => cellValue(cell)) : [];
         const entries = rows.slice(1);
         renderPartnerBoard(entries, headers);
+        renderRegistrationList(entries, headers);
       } catch (error) {
-        const message = '<tr><td colspan="3"><p class="partner-empty">Partner board unavailable. Check that the responses sheet is shared publicly.</p></td></tr>';
-        lookingBody.innerHTML = message;
-        partneredBody.innerHTML = message;
+        lookingBody.innerHTML = errorMessage;
+        partneredBody.innerHTML = errorMessage;
+        tableHead.innerHTML = '<tr><th>Registrations</th></tr>';
+        tableBody.innerHTML = '<tr><td><p class="partner-empty">Registration data unavailable. Check that the responses sheet is shared publicly.</p></td></tr>';
       }
     }
 
     (function () {
       const embedUrl = withEnglishLocale(GOOGLE_FORM_EMBED_URL.trim());
-      const sheetUrl = GOOGLE_SHEET_EMBED_URL.trim();
       const iframe = document.getElementById('registration-iframe');
       const link = document.getElementById('registration-link');
       const embed = document.getElementById('form-embed');
       const setup = document.getElementById('form-setup');
-      const sheetIframe = document.getElementById('participants-iframe');
-      const sheetEmbed = document.getElementById('sheet-embed');
-      const sheetSetup = document.getElementById('sheet-setup');
 
       document.getElementById('venmo-handle').textContent = VENMO_HANDLE;
       document.getElementById('venmo-link').href = 'https://venmo.com/' + VENMO_HANDLE.replace(/^@/, '');
@@ -1008,14 +1080,7 @@
         link.hidden = false;
       }
 
-      if (!sheetUrl) {
-        sheetSetup.hidden = false;
-      } else {
-        sheetIframe.src = sheetUrl;
-        sheetEmbed.hidden = false;
-      }
-
-      loadPartnerBoard();
+      loadRegistrationData();
     })();
   </script>
 </body>
