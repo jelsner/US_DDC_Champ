@@ -873,7 +873,7 @@
     const GOOGLE_FORM_EMBED_URL = 'https://docs.google.com/forms/d/17Ux1yRDCKT04Kwp_qwQUUv_zHQ0_ZAGJE8JtzvK_96Q/viewform?embedded=true&hl=en';
     const GOOGLE_SHEET_ID = '1nkYIMeVzAX0DezESp1atoudO4a1HHLt2eqpQ3ns8TO0';
     const BATCHGEO_MAP_URL = 'https://batchgeo.com/map/b5fe37ee43af78b895d84b5002dab05c';
-    const PRIVATE_SHEET_COLUMNS = [/shirt/i];
+    const PRIVATE_SHEET_COLUMNS = [/shirt/i, /timestamp/i];
 
     const VENMO_HANDLE = '@James-Elsner-2';
 
@@ -884,7 +884,33 @@
     }
 
     function cellValue(cell) {
-      return cell && cell.v != null ? String(cell.v).trim() : '';
+      if (!cell) return '';
+      if (cell.f != null && String(cell.f).trim() !== '') return String(cell.f).trim();
+      if (cell.v != null) return String(cell.v).trim();
+      return '';
+    }
+
+    function getSheetHeaders(table) {
+      const colHeaders = (table.cols || []).map((col) => (col.label || '').trim());
+      if (table.parsedNumHeaders > 0 && colHeaders.some(Boolean)) {
+        return colHeaders;
+      }
+      if (!table.rows || !table.rows.length) return [];
+      return (table.rows[0].c || []).map((cell) => cellValue(cell));
+    }
+
+    function getSheetRows(table) {
+      if (!table.rows) return [];
+      if (table.parsedNumHeaders > 0) return table.rows;
+      return table.rows.slice(1);
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
     }
 
     function normalizeName(name) {
@@ -904,7 +930,7 @@
       const statusIndex = headers.findIndex((header) => /partner status|have a partner|partner\?/i.test(header));
       const nameIndex = headers.findIndex((header) => /^your name$/i.test(header));
       const emailIndex = headers.findIndex((header) => /email/i.test(header));
-      const partnerIndex = headers.findIndex((header) => /partner name/i.test(header));
+      const partnerIndex = headers.findIndex((header) => /partner name|enter their name/i.test(header));
       const divisionIndex = headers.findIndex((header) => /division/i.test(header));
       const timestampIndex = headers.findIndex((header) => /timestamp/i.test(header));
 
@@ -1016,12 +1042,15 @@
         return Boolean(firstValue);
       });
 
-      tableHead.innerHTML = '<tr>' + visibleIndexes.map(({ header }) => `<th>${header}</th>`).join('') + '</tr>';
+      tableHead.innerHTML = '<tr>' + visibleIndexes.map(({ header }) => `<th>${escapeHtml(header)}</th>`).join('') + '</tr>';
 
       tableBody.innerHTML = dataRows.length
         ? dataRows.map((row) => {
             const cells = row.c || [];
-            return '<tr>' + visibleIndexes.map(({ index }) => `<td>${cellValue(cells[index]) || '—'}</td>`).join('') + '</tr>';
+            return '<tr>' + visibleIndexes.map(({ index }) => {
+              const value = cellValue(cells[index]) || '—';
+              return `<td>${escapeHtml(value)}</td>`;
+            }).join('') + '</tr>';
           }).join('')
         : '<tr><td colspan="' + visibleIndexes.length + '"><p class="partner-empty">No registrations yet.</p></td></tr>';
     }
@@ -1042,9 +1071,8 @@
         if (!match) throw new Error('Could not parse sheet response');
 
         const data = JSON.parse(match[1]);
-        const rows = data.table.rows || [];
-        const headers = rows.length ? rows[0].c.map((cell) => cellValue(cell)) : [];
-        const entries = rows.slice(1);
+        const headers = getSheetHeaders(data.table);
+        const entries = getSheetRows(data.table);
         renderPartnerBoard(entries, headers);
         renderRegistrationList(entries, headers);
       } catch (error) {
