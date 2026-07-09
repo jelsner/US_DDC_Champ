@@ -350,44 +350,6 @@
       border: 0;
     }
 
-    .sheet-embed {
-      background: var(--card);
-      border: 1px solid rgba(23, 50, 77, .08);
-      border-radius: 1.4rem;
-      overflow: hidden;
-      box-shadow: 0 10px 25px rgba(23, 50, 77, .07);
-    }
-
-    .sheet-embed iframe {
-      display: block;
-      width: 100%;
-      min-height: 28rem;
-      border: 0;
-    }
-
-    .map-embed {
-      background: var(--card);
-      border: 1px solid rgba(23, 50, 77, .08);
-      border-radius: 1.4rem;
-      overflow: hidden;
-      box-shadow: 0 10px 25px rgba(23, 50, 77, .07);
-      margin-bottom: 1.5rem;
-    }
-
-    .map-embed iframe {
-      display: block;
-      width: 100%;
-      min-height: 32rem;
-      border: 0;
-    }
-
-    .map-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: .75rem;
-      margin-top: .75rem;
-    }
-
     .venue-list {
       margin: .5rem 0 0;
       padding: 0;
@@ -471,40 +433,6 @@
       border-bottom: 0;
     }
 
-    .registration-table-wrap {
-      overflow-x: auto;
-      background: var(--card);
-      border: 1px solid rgba(23, 50, 77, .08);
-      border-radius: 1.4rem;
-      box-shadow: 0 10px 25px rgba(23, 50, 77, .07);
-      margin-bottom: 1.5rem;
-    }
-
-    .registration-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: .95rem;
-    }
-
-    .registration-table th,
-    .registration-table td {
-      padding: .65rem .75rem;
-      text-align: left;
-      border-bottom: 1px solid rgba(23, 50, 77, .08);
-    }
-
-    .registration-table th {
-      font-size: .75rem;
-      text-transform: uppercase;
-      letter-spacing: .06em;
-      color: var(--muted);
-      background: rgba(255, 248, 223, .55);
-    }
-
-    .registration-table tbody tr:last-child td {
-      border-bottom: 0;
-    }
-
     .partner-empty {
       color: var(--muted);
       font-size: .95rem;
@@ -535,12 +463,6 @@
       display: inline-block;
       margin-left: .45rem;
       vertical-align: middle;
-    }
-
-    .subsection-title {
-      font-size: 1.35rem;
-      margin: 2rem 0 .75rem;
-      letter-spacing: -.02em;
     }
 
     .form-setup {
@@ -722,7 +644,7 @@
       <div class="cards">
         <article class="card">
           <h3>Need a partner?</h3>
-          <p>Register now and select <strong>I’m looking for a partner</strong>. Check the <a href="#participants">Participants</a> list and <a href="#player-map">player map</a> to find a teammate near you. Once paired, either player can list the other as their partner.</p>
+          <p>Register now and select <strong>I’m looking for a partner</strong>. Check the <a href="#participants">partner board</a> to find a teammate. Once paired, either player can list the other as their partner.</p>
         </article>
         <article class="card">
           <h3>Already teamed up?</h3>
@@ -791,7 +713,7 @@
 
     <section id="participants">
       <h2 class="section-title">Participants</h2>
-      <p class="registration-intro">See who’s registered, who’s already partnered up, and who’s looking for a teammate. Use the partner lists and map below to connect with players near you.</p>
+      <p class="registration-intro">See who’s looking for a partner and which teams are already formed. Names are shown as first name and last initial. Email addresses appear only for players actively looking for a partner.</p>
 
       <div class="partner-board">
         <article class="partner-panel">
@@ -832,36 +754,6 @@
           </div>
         </article>
       </div>
-
-      <h3 class="subsection-title" id="player-map">Player map</h3>
-      <p class="registration-intro">Looking for a partner? Explore where other DDC players are located. Click a pin for details. Want to be added? Contact <a href="mailto:james.elsner@gmail.com">james.elsner@gmail.com</a>.</p>
-
-      <div class="map-embed">
-        <iframe
-          id="player-map-iframe"
-          src="https://batchgeo.com/map/b5fe37ee43af78b895d84b5002dab05c"
-          title="DDC players map"
-          loading="lazy"
-          allowfullscreen
-        ></iframe>
-      </div>
-
-      <div class="map-actions">
-        <a class="button secondary" href="https://batchgeo.com/map/b5fe37ee43af78b895d84b5002dab05c" target="_blank" rel="noopener noreferrer">Open map in new window</a>
-      </div>
-
-      <h3 class="subsection-title">Full registration list</h3>
-
-      <div class="registration-table-wrap">
-        <table class="registration-table" id="registration-table">
-          <thead id="registration-head">
-            <tr><th>Loading…</th></tr>
-          </thead>
-          <tbody id="registration-body">
-            <tr><td>Loading registrations…</td></tr>
-          </tbody>
-        </table>
-      </div>
     </section>
   </main>
 
@@ -872,8 +764,6 @@
   <script>
     const GOOGLE_FORM_EMBED_URL = 'https://docs.google.com/forms/d/17Ux1yRDCKT04Kwp_qwQUUv_zHQ0_ZAGJE8JtzvK_96Q/viewform?embedded=true&hl=en';
     const GOOGLE_SHEET_ID = '1nkYIMeVzAX0DezESp1atoudO4a1HHLt2eqpQ3ns8TO0';
-    const BATCHGEO_MAP_URL = 'https://batchgeo.com/map/b5fe37ee43af78b895d84b5002dab05c';
-    const PRIVATE_SHEET_COLUMNS = [/shirt/i, /timestamp/i];
 
     const VENMO_HANDLE = '@James-Elsner-2';
 
@@ -915,6 +805,13 @@
 
     function normalizeName(name) {
       return name.trim().toLowerCase();
+    }
+
+    function formatDisplayName(fullName) {
+      const parts = fullName.trim().split(/\s+/).filter(Boolean);
+      if (!parts.length) return '';
+      if (parts.length === 1) return parts[0];
+      return parts[0] + ' ' + parts[parts.length - 1][0] + '.';
     }
 
     function isLookingStatus(status, partnerName) {
@@ -999,9 +896,9 @@
       lookingBody.innerHTML = looking.length
         ? looking.map((player) => `
             <tr>
-              <td>${player.name}<span class="partner-status looking">Looking</span></td>
-              <td>${player.division || '—'}</td>
-              <td>${player.email || '—'}</td>
+              <td>${escapeHtml(formatDisplayName(player.name))}<span class="partner-status looking">Looking</span></td>
+              <td>${escapeHtml(player.division || '—')}</td>
+              <td>${escapeHtml(player.email || '—')}</td>
             </tr>
           `).join('')
         : '<tr><td colspan="3"><p class="partner-empty">No players looking for a partner yet.</p></td></tr>';
@@ -1009,58 +906,18 @@
       partneredBody.innerHTML = partnered.length
         ? partnered.map((team) => `
             <tr>
-              <td>${team.name}</td>
-              <td>${team.partner || '—'}</td>
-              <td>${team.division || '—'}</td>
+              <td>${escapeHtml(formatDisplayName(team.name))}</td>
+              <td>${escapeHtml(formatDisplayName(team.partner) || '—')}</td>
+              <td>${escapeHtml(team.division || '—')}</td>
             </tr>
           `).join('')
         : '<tr><td colspan="3"><p class="partner-empty">No partnered teams listed yet.</p></td></tr>';
     }
 
-    function isPrivateColumn(header) {
-      return PRIVATE_SHEET_COLUMNS.some((pattern) => pattern.test(header));
-    }
-
-    function renderRegistrationList(rows, headers) {
-      const tableHead = document.getElementById('registration-head');
-      const tableBody = document.getElementById('registration-body');
-      const visibleIndexes = headers
-        .map((header, index) => ({ header, index }))
-        .filter(({ header }) => header && !isPrivateColumn(header));
-
-      if (!visibleIndexes.length) {
-        tableHead.innerHTML = '<tr><th>Registrations</th></tr>';
-        tableBody.innerHTML = '<tr><td><p class="partner-empty">No registration data available.</p></td></tr>';
-        return;
-      }
-
-      const dataRows = rows.filter((row) => {
-        const cells = row.c || [];
-        const firstValue = visibleIndexes
-          .map(({ index }) => cellValue(cells[index]))
-          .find((value) => value);
-        return Boolean(firstValue);
-      });
-
-      tableHead.innerHTML = '<tr>' + visibleIndexes.map(({ header }) => `<th>${escapeHtml(header)}</th>`).join('') + '</tr>';
-
-      tableBody.innerHTML = dataRows.length
-        ? dataRows.map((row) => {
-            const cells = row.c || [];
-            return '<tr>' + visibleIndexes.map(({ index }) => {
-              const value = cellValue(cells[index]) || '—';
-              return `<td>${escapeHtml(value)}</td>`;
-            }).join('') + '</tr>';
-          }).join('')
-        : '<tr><td colspan="' + visibleIndexes.length + '"><p class="partner-empty">No registrations yet.</p></td></tr>';
-    }
-
-    async function loadRegistrationData() {
+    async function loadPartnerBoard() {
       const lookingBody = document.getElementById('looking-body');
       const partneredBody = document.getElementById('partnered-body');
-      const tableHead = document.getElementById('registration-head');
-      const tableBody = document.getElementById('registration-body');
-      const errorMessage = '<tr><td colspan="3"><p class="partner-empty">Registration data unavailable. Check that the responses sheet is shared publicly.</p></td></tr>';
+      const errorMessage = '<tr><td colspan="3"><p class="partner-empty">Partner board unavailable. Check that the responses sheet is shared publicly.</p></td></tr>';
 
       try {
         const response = await fetch(
@@ -1074,12 +931,9 @@
         const headers = getSheetHeaders(data.table);
         const entries = getSheetRows(data.table);
         renderPartnerBoard(entries, headers);
-        renderRegistrationList(entries, headers);
       } catch (error) {
         lookingBody.innerHTML = errorMessage;
         partneredBody.innerHTML = errorMessage;
-        tableHead.innerHTML = '<tr><th>Registrations</th></tr>';
-        tableBody.innerHTML = '<tr><td><p class="partner-empty">Registration data unavailable. Check that the responses sheet is shared publicly.</p></td></tr>';
       }
     }
 
@@ -1093,11 +947,6 @@
       document.getElementById('venmo-handle').textContent = VENMO_HANDLE;
       document.getElementById('venmo-link').href = 'https://venmo.com/' + VENMO_HANDLE.replace(/^@/, '');
 
-      const mapIframe = document.getElementById('player-map-iframe');
-      if (mapIframe && BATCHGEO_MAP_URL) {
-        mapIframe.src = BATCHGEO_MAP_URL;
-      }
-
       if (!embedUrl) {
         setup.hidden = false;
         link.hidden = true;
@@ -1108,7 +957,7 @@
         link.hidden = false;
       }
 
-      loadRegistrationData();
+      loadPartnerBoard();
     })();
   </script>
 </body>
