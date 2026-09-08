@@ -886,7 +886,7 @@
 
       function addTeam(player, partner, division) {
         if (!partner) return;
-        const teamKey = [normalizeName(player), normalizeName(partner), (division || '').toLowerCase()].sort().join('|');
+        const teamKey = [normalizeName(player), normalizeName(partner)].sort().join('|');
         if (seenTeams.has(teamKey)) return;
         seenTeams.add(teamKey);
         partnered.push({ name: player, partner, division });
