@@ -298,58 +298,6 @@
       margin-top: .25rem;
     }
 
-    .payment-methods {
-      display: flex;
-      flex-direction: column;
-      gap: .65rem;
-      margin-top: .75rem;
-    }
-
-    .payment-link {
-      display: inline-flex;
-      align-items: center;
-      gap: .5rem;
-      font-weight: 750;
-      text-decoration: none;
-      color: var(--ink);
-    }
-
-    .payment-link:hover {
-      color: var(--orange);
-    }
-
-    .payment-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 4.5rem;
-      padding: .2rem .55rem;
-      border-radius: 999px;
-      font-size: .72rem;
-      font-weight: 800;
-      letter-spacing: .04em;
-      text-transform: uppercase;
-      color: white;
-    }
-
-    .payment-badge.venmo { background: #008cff; }
-
-    .form-embed {
-      background: var(--card);
-      border: 1px solid rgba(23, 50, 77, .08);
-      border-radius: 1.4rem;
-      overflow: hidden;
-      box-shadow: 0 10px 25px rgba(23, 50, 77, .07);
-      margin-bottom: 1.5rem;
-    }
-
-    .form-embed iframe {
-      display: block;
-      width: 100%;
-      min-height: 72rem;
-      border: 0;
-    }
-
     .venue-list {
       margin: .5rem 0 0;
       padding: 0;
@@ -465,40 +413,6 @@
       vertical-align: middle;
     }
 
-    .form-setup {
-      background: var(--cream);
-      border: 2px dashed rgba(7, 63, 29, .22);
-      border-radius: 1.4rem;
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .form-setup h3 {
-      margin: 0 0 .5rem;
-    }
-
-    .form-setup p,
-    .form-setup ol {
-      margin: 0;
-      color: var(--muted);
-    }
-
-    .form-setup ol {
-      margin-top: .75rem;
-      padding-left: 1.25rem;
-    }
-
-    .form-setup li + li {
-      margin-top: .35rem;
-    }
-
-    .form-setup code {
-      font-size: .9em;
-      background: rgba(255, 255, 255, .8);
-      padding: .1rem .35rem;
-      border-radius: .35rem;
-    }
-
     @media (max-width: 820px) {
       .site-header { align-items: flex-start; flex-direction: column; }
       nav { flex-wrap: wrap; }
@@ -555,7 +469,7 @@
       </div>
 
       <div class="buttons">
-        <a class="button primary" href="#registration">Register</a>
+        <a class="button primary" href="#registration">Registration closed</a>
         <a class="button secondary" href="#info">Tournament Info</a>
       </div>
     </div>
@@ -569,6 +483,11 @@
   <main>
     <section id="news">
       <h2 class="section-title">Latest News</h2>
+      <article class="news-item">
+        <div class="news-date">October 24, 2026</div>
+        <h3>Registration is closed</h3>
+        <p>Registration for the 2026 US DDC Championship is now closed. Thank you to everyone who signed up!</p>
+      </article>
       <article class="news-item">
         <div class="news-date">September 30, 2026</div>
         <h3>Registration closes October 23</h3>
@@ -603,77 +522,7 @@
 
     <section id="registration">
       <h2 class="section-title">Registration</h2>
-      <p class="registration-intro">Register for the 2026 US DDC Championship at <strong>$20 per person</strong>. You do <strong>not</strong> need a confirmed partner to sign up — choose <strong>I’m looking for a partner</strong> on the form and your name will appear on the <a href="#participants">partner board</a>. Already teamed up? Both players register separately and list each other’s names.</p>
-
-      <div class="registration-details cards">
-        <article class="card">
-          <h3>Entry fee</h3>
-          <p><strong>$20 per person</strong>, whether you have a partner or are still looking for one. If you’re already on a team, both players register and pay separately. Include your name in the Venmo note so we can match your entry.</p>
-        </article>
-        <article class="card">
-          <h3>Payment</h3>
-          <p>After submitting the registration form, send your <strong>$20</strong> entry fee via Venmo:</p>
-          <div class="payment-methods">
-            <a class="payment-link" id="venmo-link" href="https://venmo.com/James-Elsner-2" target="_blank" rel="noopener noreferrer">
-              <span class="payment-badge venmo">Venmo</span>
-              <span id="venmo-handle">@James-Elsner-2</span>
-            </a>
-          </div>
-        </article>
-        <article class="card">
-          <h3>Divisions</h3>
-          <ul>
-            <li><strong>Open</strong> — any team of two players</li>
-            <li><strong>Women’s</strong> — teams of two women</li>
-          </ul>
-        </article>
-        <article class="card">
-          <h3>On the form</h3>
-          <ul>
-            <li>Your name and email</li>
-            <li><strong>Partner status:</strong> I have a partner <em>or</em> I’m looking for a partner</li>
-            <li>Partner name — only if you already have one</li>
-            <li>Division: Open or Women’s</li>
-          </ul>
-        </article>
-      </div>
-
-      <div class="buttons">
-        <a class="button primary" id="registration-link" href="#registration" target="_blank" rel="noopener noreferrer">Open registration form</a>
-      </div>
-
-      <div class="form-setup" id="form-setup" hidden>
-        <h3>Connect your Google Form</h3>
-        <p>Paste your form’s embed URL into <code>GOOGLE_FORM_EMBED_URL</code> near the bottom of this page.</p>
-        <ol>
-          <li>Create your registration form in <a href="https://forms.google.com" target="_blank" rel="noopener noreferrer">Google Forms</a>.</li>
-          <li>Click <strong>Send</strong> → <strong>&lt;&gt;</strong> (embed) → copy the <code>src</code> URL from the iframe code.</li>
-          <li>Set <code>GOOGLE_FORM_EMBED_URL</code> to that URL and save.</li>
-        </ol>
-      </div>
-
-      <div class="form-embed" id="form-embed" hidden>
-        <iframe
-          id="registration-iframe"
-          title="US DDC Championship 2026 player registration"
-          loading="lazy"
-        ></iframe>
-      </div>
-
-      <div class="cards">
-        <article class="card">
-          <h3>Need a partner?</h3>
-          <p>Register now and select <strong>I’m looking for a partner</strong>. Check the <a href="#participants">partner board</a> to find a teammate. Once paired, either player can list the other as their partner.</p>
-        </article>
-        <article class="card">
-          <h3>Already teamed up?</h3>
-          <p>Each player registers and pays individually. Both partners should list each other on the form and select <strong>I have a partner</strong>.</p>
-        </article>
-        <article class="card">
-          <h3>Questions?</h3>
-          <p>Contact the Tally Pod organizers for help with registration, payment, partner matching, or division placement.</p>
-        </article>
-      </div>
+      <p class="registration-intro"><strong>Registration for the 2026 US DDC Championship is now closed.</strong> Thank you to everyone who signed up. Contact the Tally Pod organizers with any questions.</p>
     </section>
 
     <section id="info">
@@ -793,16 +642,7 @@
   </footer>
 
   <script>
-    const GOOGLE_FORM_EMBED_URL = 'https://docs.google.com/forms/d/17Ux1yRDCKT04Kwp_qwQUUv_zHQ0_ZAGJE8JtzvK_96Q/viewform?embedded=true&hl=en';
     const GOOGLE_SHEET_ID = '1nkYIMeVzAX0DezESp1atoudO4a1HHLt2eqpQ3ns8TO0';
-
-    const VENMO_HANDLE = '@James-Elsner-2';
-
-    function withEnglishLocale(url) {
-      if (!url) return url;
-      const separator = url.includes('?') ? '&' : '?';
-      return url.includes('hl=') ? url : url + separator + 'hl=en';
-    }
 
     function cellValue(cell) {
       if (!cell) return '';
@@ -968,28 +808,7 @@
       }
     }
 
-    (function () {
-      const embedUrl = withEnglishLocale(GOOGLE_FORM_EMBED_URL.trim());
-      const iframe = document.getElementById('registration-iframe');
-      const link = document.getElementById('registration-link');
-      const embed = document.getElementById('form-embed');
-      const setup = document.getElementById('form-setup');
-
-      document.getElementById('venmo-handle').textContent = VENMO_HANDLE;
-      document.getElementById('venmo-link').href = 'https://venmo.com/' + VENMO_HANDLE.replace(/^@/, '');
-
-      if (!embedUrl) {
-        setup.hidden = false;
-        link.hidden = true;
-      } else {
-        iframe.src = embedUrl.includes('embedded=true') ? embedUrl : embedUrl + (embedUrl.includes('?') ? '&' : '?') + 'embedded=true';
-        link.href = embedUrl.replace('?embedded=true', '').replace('&embedded=true', '').replace(/[&?]hl=en/, '');
-        embed.hidden = false;
-        link.hidden = false;
-      }
-
-      loadPartnerBoard();
-    })();
+    loadPartnerBoard();
   </script>
 </body>
 </html>
